@@ -1,0 +1,27 @@
+<Sidebar ref:Sidebar></Sidebar>
+<Main ref:Main></Main>
+
+<script>
+import Sidebar from '../sidebar';
+import Main from '../main';
+import Data from '../data';
+
+
+export default {
+	components: { Sidebar, Main },
+	store: () => Data.Store,
+	oncreate () {
+		// this.load();
+	},
+
+	// methods: {
+	// 	load () {
+	// 		Data.Table1.get().then(items => {
+	// 			this.store.set({ items });
+	// 		});
+	// 	},
+
+	// }
+};
+
+</script>

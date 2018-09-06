@@ -1,0 +1,37 @@
+<main>
+	here be map
+
+	<h1>Captain's log</h1>
+	<section class="log-scroller">
+	{#each $days as day}
+		<Day data={day}></Day>
+	{/each}
+	</section>
+</main>
+
+
+<script>
+import Day from '../day';
+import Data from '../data';
+
+export default {
+	components: { Day },
+	store: () => Data.Store,
+	oncreate() {
+		this.load();
+	},
+	methods: {
+
+		load () {
+			const days = [
+				{ day: 1, date: '1 Jan 1795', description: 'day 1' },
+				{ day: 2, date: '2 Jan 1795', description: 'day 2' },
+
+			];
+			this.store.set({ days })
+		}
+
+
+	}
+};
+</script>
