@@ -59,6 +59,9 @@ gulp.task('js', ['eslint'], () => {
 
 	return gulp.src(['client/index.js'])
 		.pipe(webpackStream(webpackConfig, webpack, webpackLogger))
+		.on('error', function () {
+			this.emit('end');
+		})
 		.pipe(gulp.dest(PUBLIC_PATH))
 		.pipe(livereload());
 

@@ -1,22 +1,13 @@
 <div class="sidebar">
-	<h1>Gra</h1>
+	<h2>Money</h2>
+	<div>Cash: {$cash}</div>
+	<div>Bank: {$bank}</div>
 
-	<h2>Stats</h2>
-	<ul>
-		<li>Date (days)</li>
-		<li>Location</li>
-		<li>Cash</li>
-		<li>Bank</li>
-	</ul>
-
-	<h2>Fleet</h2>
-	<ul>
-		<li>Schooner level 1</li>
-	</ul>
-
-	<h2>Cargo</h2>
-	<ul>
-		<li>100 barrels of rum</li>
+	<h2>Locations</h2>
+	<ul class="locations">
+		{#each Object.entries($models.locations) as [name, location]}
+		<li><a href="#" on:click="goto(event, location)" class="{location.id === $locationId ? 'active' : ''}">{location.name}</a></li>
+		{/each}
 	</ul>
 </div>
 
@@ -26,7 +17,12 @@ import Data from '../data';
 
 export default {
 	store: () => Data.Store,
+
 	methods: {
+		goto (ev, location) {
+			ev.preventDefault();
+			this.store.goto(location.id);
+		}
 	}
 };
 </script>

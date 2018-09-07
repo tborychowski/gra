@@ -1,21 +1,53 @@
 <main>
-	here be map
-
-	<h1>Captain's log</h1>
-	<section class="log-scroller">
-	{#each $days as day}
-		<Day data={day}></Day>
-	{/each}
+	<section>
+		<h2>Day {$day}, {$location.name}</h2>
+		<p>{$location.description}</p>
+	</section>
+	<section class="store-front">
+		<div class="table-wrap">
+			<h2>Cargo</h2>
+			<table>
+				<thead><tr><td>Name</td><td>Amount</td><td>Price</td><td></td></tr></thead>
+				<tbody>
+					{#each $cargo as item}
+					<tr>
+						<td>{$models.cargo[item.id].name}</td>
+						<td>{item.amount} {$models.cargo[item.id].unit}s</td>
+						<td>{item.price}</td>
+						<td><button>Sell</button></td>
+					</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+		<div class="table-wrap">
+			<h2>Market</h2>
+			<table>
+				<thead><tr>
+					<td>Name</td>
+					<td>Price</td>
+					<td></td>
+				</tr></thead>
+				<tbody>
+					{#each $location.prices as item}
+					<tr>
+						<td>{$models.cargo[item.id].name}</td>
+						<td>{item.supply}</td>
+						<td><button>Buy</button></td>
+					</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
 	</section>
 </main>
 
 
 <script>
-import Day from '../day';
 import Data from '../data';
 
 export default {
-	components: { Day },
+	components: { },
 	store: () => Data.Store,
 	oncreate() {
 		this.load();
@@ -23,13 +55,7 @@ export default {
 	methods: {
 
 		load () {
-			const days = [
-				{ day: 1, date: '1 Jan 1700', description: 'day 1' },
-				{ day: 2, date: '2 Jan 1700', description: 'day 2' },
-			];
-			this.store.set({ days })
-		}
-
+		},
 
 	}
 };
