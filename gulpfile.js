@@ -13,10 +13,20 @@ const webpackConfig = require('./webpack.config.js');
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 const PUBLIC_PATH = 'public/';
+const chalk = require('chalk');
 
 
 env.set({ NODE_ENV: isProd ? 'production' : 'development' });
 
+function webpackLogger (err) {
+	const time = new Date().toTimeString().substr(0,8);
+	let type = chalk.green('info'), message = 'webpack build finished';
+	if (err) {
+		type = chalk.red('error');
+		message = chalk.red(err);
+	}
+	console.log(`[${time}] [${type}] ${message}`);
+}
 
 gulp.task('help', () => {
 	const tasks = '  ' + Object.keys(gulp.tasks).sort().join('\n  ');
@@ -48,7 +58,7 @@ gulp.task('js', ['eslint'], () => {
 	}
 
 	return gulp.src(['client/index.js'])
-		.pipe(webpackStream(webpackConfig, webpack))
+		.pipe(webpackStream(webpackConfig, webpack, webpackLogger))
 		.pipe(gulp.dest(PUBLIC_PATH))
 		.pipe(livereload());
 
@@ -88,4 +98,4 @@ gulp.task('watch', ['default'], () => {
 });
 
 
-gulp.task('default', [ 'js', 'styl', 'assets', 'eslint' ]);
+gulp.task('default', [ 'js', 'styl', 'assets' ]);

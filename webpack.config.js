@@ -10,10 +10,10 @@ module.exports = {
 		publicPath: './public/',
 	},
 	resolve: { extensions: ['.js', '.json', '.html'] },
-	// stats: 'normal', // minimal
+	// stats: 'minimal',
 	module: {
 		rules: [
-			{ test: /\.js$/, use: 'babel-loader', exclude: /node_modules/ },
+			{ test: /\.js$/, exclude: /node_modules/, use: 'babel-loader' },
 			{
 				test: /\.html$/,
 				exclude: /node_modules/,

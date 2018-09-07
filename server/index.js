@@ -6,7 +6,6 @@ const app = express();
 const api = require('./api/');
 
 
-
 if (app.get('env') === 'development') app.use(require('connect-livereload')());
 
 app.use(bodyParser.urlencoded({ extended: false }));
