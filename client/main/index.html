@@ -3,16 +3,30 @@
 		<h2>Day {$day}, {$location.name}</h2>
 		<p>{$location.description}</p>
 	</section>
+	<section class="table-header">
+			<div>Cash: {$cash}</div>
+			<div class="flex-filler"></div>
+			<div class="bank-box">
+				<div>Bank: {$bank}</div>
+				<button>Deposit</button>
+				<button>Withdraw</button>
+			</div>
+	</section>
 	<section class="store-front">
 		<div class="table-wrap">
 			<h2>Cargo</h2>
 			<table>
-				<thead><tr><td>Name</td><td>Amount</td><td>Price</td><td></td></tr></thead>
+				<thead><tr>
+					<td class="item-name">Name</td>
+					<td>Amount</td>
+					<td>Price</td>
+					<td></td>
+				</tr></thead>
 				<tbody>
 					{#each $cargo as item}
 					<tr>
-						<td>{$models.cargo[item.id].name}</td>
-						<td>{item.amount} {$models.cargo[item.id].unit}s</td>
+						<td class="item-name">{item.id}</td>
+						<td>{item.amount} {item.unit || 'ton'}s</td>
 						<td>{item.price}</td>
 						<td><button>Sell</button></td>
 					</tr>
@@ -24,15 +38,15 @@
 			<h2>Market</h2>
 			<table>
 				<thead><tr>
-					<td>Name</td>
+					<td class="item-name">Name</td>
 					<td>Price</td>
 					<td></td>
 				</tr></thead>
 				<tbody>
 					{#each $location.prices as item}
 					<tr>
-						<td>{$models.cargo[item.id].name}</td>
-						<td>{item.supply}</td>
+						<td class="item-name">{item.id}</td>
+						<td>{$getItemPrice(item)}</td>
 						<td><button>Buy</button></td>
 					</tr>
 					{/each}
