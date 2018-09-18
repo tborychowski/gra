@@ -1,0 +1,75 @@
+<section class="store-front">
+	<div class="table-wrap">
+		<h2>Cargo</h2>
+		<table>
+			<thead><tr>
+				<td class="item-name">Name</td>
+				<td>Amount</td>
+				<td>Paid</td>
+				<td>Can get</td>
+				<td></td>
+			</tr></thead>
+			<tbody>
+				{#each $cargo as item}
+				<tr>
+					<td class="item-name">{item.id}</td>
+					<td>{item.amount} {item.unit || 'ton'}s</td>
+					<td>{formatNumber(item.price)}</td>
+					<td>{$getItemPrice(item)}</td>
+					<td><button on:click="sell(item)">Sell</button></td>
+				</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+	<div class="table-wrap">
+		<h2>Market</h2>
+		<table>
+			<thead><tr>
+				<td class="item-name">Name</td>
+				<td>Price</td>
+				<td></td>
+			</tr></thead>
+			<tbody>
+				{#each $location.prices as item}
+				<tr>
+					<td class="item-name">{item.id}</td>
+					<td>{$getItemPrice(item)}</td>
+					<td><button on:click="buy(item)">Buy</button></td>
+				</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+</section>
+
+
+<script>
+import Data from '../data';
+import {formatNumber} from '../util';
+
+export default {
+	store: () => Data.Store,
+	helpers: {
+		formatNumber
+	},
+	methods: {
+		sell (item) {
+			let amount = window.prompt('How much?', item.amount);
+			if (!amount) return;
+			amount = parseInt(amount, 10);
+			this.store.sell(item, amount);
+		},
+
+		buy (item) {
+			const {cash} = this.store.get();
+			const max = Math.floor(cash / item.price);
+			let amount = window.prompt('How much?', max);
+			if (!amount) return;
+			amount = parseInt(amount, 10);
+			if (amount > max) return alert('You don\'t have enough cash!');
+			this.store.buy(item, amount);
+		}
+	}
+};
+</script>

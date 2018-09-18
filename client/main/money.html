@@ -1,0 +1,51 @@
+<section class="table-header">
+		<div>Cash: {formatNumber($cash)}</div>
+		<div class="flex-filler"></div>
+		<div class="bank-box">
+			<div>Bank: {formatNumber($bank)}</div>
+			{#if $bank === 0}
+				<button on:click="onclick('deposit')">Deposit</button>
+				<button on:click="onclick('borrow')">Borrow</button>
+			{:elseif $bank < 0}
+				<button on:click="onclick('repay')">Repay</button>
+				<button on:click="onclick('borrow')">Borrow</button>
+			{:else}
+				<button on:click="onclick('deposit')">Deposit</button>
+				<button on:click="onclick('withdraw')">Withdraw</button>
+			{/if}
+		</div>
+</section>
+
+<script>
+import Data from '../data';
+import {formatNumber} from '../util';
+
+export default {
+	store: () => Data.Store,
+	helpers: {
+		formatNumber
+	},
+	methods: {
+		onclick (action) {
+			const {cash, bank} = this.store.get();
+			let amount = 1000;
+
+			if (action === 'repay') amount = Math.min(Math.abs(bank), cash);
+			else if (action === 'deposit') amount = cash;
+			else if (action === 'withdraw') amount = bank;
+
+			amount = window.prompt('How much?', amount);
+			if (!amount) return;
+			amount = parseInt(amount, 10);
+
+
+			if (action === 'withdraw' || action === 'borrow') this.store.withdraw(amount);
+			else {	// deposit, repay
+				if (amount > cash) return alert('You don\'t have enough cash!');
+				this.store.deposit(amount);
+			}
+
+		},
+	}
+};
+</script>

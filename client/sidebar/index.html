@@ -2,7 +2,11 @@
 	<h2>Locations</h2>
 	<ul class="locations">
 		{#each Object.entries($models.locations) as [name, location]}
-		<li><a href="#" on:click="goto(event, location)" class="{location.id === $locationId ? 'active' : ''}">{location.name}</a></li>
+		<li>
+			<a href="#"
+				on:click="goto(event, location)"
+				class="{location.id} {location.id === $locationId ? 'active' : ''}">{location.name}</a>
+		</li>
 		{/each}
 	</ul>
 </div>

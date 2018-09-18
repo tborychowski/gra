@@ -1,12 +1,12 @@
 import london from './london';
 import nassau from './nassau';
 import macau from './macau';
-import bombai from './bombai';
+import bombay from './bombay';
 
 
 export default {
 	london,
 	nassau,
 	macau,
-	bombai,
+	bombay,
 };

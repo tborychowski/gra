@@ -1,6 +1,6 @@
 function formatNumber (num) {
 	num = Math.round(0 + num * 100) / 100;
-	return num.toLocaleString('en-GB', { minimumFractionDigits: 2 });
+	return num.toLocaleString('en-GB', { minimumFractionDigits: 0 });
 }
 
 
@@ -14,7 +14,11 @@ function slugify (text) {
 }
 
 
+const rand = percent => Math.floor(Math.random() * (percent + 1));
+
+
 export {
 	formatNumber,
 	slugify,
+	rand,
 };
