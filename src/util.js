@@ -14,7 +14,7 @@ function slugify (text) {
 }
 
 
-const rand = percent => Math.floor(Math.random() * (percent + 1));
+const rand = (max = 1, min = 0) => Math.floor(Math.random() * (max - min + 1) + min);
 
 
 export {

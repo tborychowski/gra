@@ -80,8 +80,7 @@ gulp.task('styl', () => {
 gulp.task('default', [ 'assets', 'styl', 'js' ], () => {
 	if (isProd) return;
 	livereload.listen();
-	gulp.watch(SRC_PATH + '**/*.styl', ['styl']);
-	gulp.watch(SRC_PATH + '**/*.js', ['js']);
-	gulp.watch(SRC_PATH + '**/*.html', ['js']);
 	gulp.watch('assets/**/*.*', ['assets']);
+	gulp.watch(SRC_PATH + '**/*.styl', ['styl']);
+	gulp.watch(SRC_PATH + '**/*.{js,html}', ['js']);
 });

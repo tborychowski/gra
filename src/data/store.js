@@ -1,59 +1,69 @@
 import { Store } from 'svelte/store.js';
 import models from './models';
-import {formatNumber} from '../util';
+import {rand} from '../util';
 
 const data = {
-	day: 1,
+	day: 0,
 	locationId: 'london',
-	log: [],
-	cargo: [
-		{ id: 'wheat', amount: 25, price: 0 },
-	],
 	cash: 0,
 	bank: 0,
+	cargo: {
+		wheat: { amount: 25, price: 0 },
+	},
+	prices: {},
 	models
 };
 
 
 class GameStore extends Store {
 
-	goto (locationId, event) {
-		if (event) event.preventDefault();
+	generateItemPrice (item, loc) {
+		let price = Math.round(rand(item.price.max, item.price.min) * loc.priceMod);
 
+		if (Math.random() < 0.15) price = Math.ceil(price * 0.75);
+		if (Math.random() < 0.05) price = Math.ceil(price * 1.5);
+
+		return price;
+	}
+
+
+	goto (locationId) {
 		// INCREASE DAY
 		const day = this.get().day + 1;
 
 		// GENERATE PRICES FOR A LOCATION
-		const {generateItemPrice} = this.get();
-		models.locations[locationId].prices.forEach(generateItemPrice);
+		const loc = models.locations[locationId];
+		const prices = JSON.parse(JSON.stringify(models.wares));
+		for (const [, ware] of Object.entries(prices)) {
+			ware.price = this.generateItemPrice(ware, loc);
+			ware.show = Math.random() < ware.showChance;
+		}
 
-		//TODO: CALCULATE BANK FEES
+		// CALCULATE BANK FEES
 		let bank = this.get().bank;
-		if (bank < 0) bank = Math.ceil(bank * 1.1);
+		if (bank < 0) bank = Math.ceil(bank * 1.15);
 
-		this.set({ locationId, day, bank });
+		this.set({ locationId, day, bank, prices });
 	}
 
-	buy (item, amount) {
-		let {getItemPrice, cash, cargo} = this.get();
-		const price = getItemPrice(item);
+	buy (itemId, amount) {
+		let {cash, cargo, prices} = this.get();
+		let price = prices[itemId].price;
 		cash -= price * amount;
-		const cargoItem = cargo.find(i => i.id === item.id);
-		if (!cargoItem) cargo.push(Object.assign({}, item, {amount}));
-		else cargo.forEach(i => { if (i.id === item.id) i.amount += amount; });
+		if (cargo[itemId]) {
+			amount += cargo[itemId].amount;
+			price = (cargo[itemId].price + price) / amount;
+		}
+		cargo[itemId] = { amount, price };
 		this.set({ cash, cargo });
 	}
 
-	sell (item, amount) {
-		let {getItemPrice, cash, cargo} = this.get();
-		const price = getItemPrice(item);
+	sell (itemId, amount) {
+		let {cash, cargo, prices} = this.get();
+		const price = prices[itemId].price;
 		cash += price * amount;
-		cargo = cargo
-			.map(i => {
-				if (i.id === item.id) i.amount -= amount;
-				return i;
-			})
-			.filter(i => !!i.amount);
+		if (cargo[itemId]) cargo[itemId].amount -= amount;
+		if (cargo[itemId].amount <= 0) delete cargo[itemId];
 
 		this.set({ cash, cargo });
 	}
@@ -78,28 +88,7 @@ const store = new GameStore(data);
 
 store.compute('location', ['locationId'], (loc) => models.locations[loc]);
 
-store.compute('cargoLoad', ['cargo'], (cargo) => cargo.reduce((p, c) => (p += c.amount), 0));
-
-store.compute('generateItemPrice', [], () => {
-	return item => {
-		let price = item.price;
-
-		if (Math.random() < 0.2) price = Math.ceil(price * 0.85);
-		if (Math.random() < 0.1) price = Math.ceil(price * 1.25);
-
-		item.price = price;
-		return formatNumber(price);
-	};
-});
-
-
-store.compute('getItemPrice', ['locationId'], (loc) => {
-	return item => {
-		const location = models.locations[loc];
-		const locationItem = location.prices.find(p => p.id === item.id);
-		return formatNumber(locationItem.price);
-	};
-});
+store.compute('cargoLoad', ['cargo'], (cargo) => Object.values(cargo).map(i => i.amount).reduce((p, c) => (p += c), 0));
 
 
 export default store;

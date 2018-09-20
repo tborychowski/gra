@@ -1,19 +1,18 @@
-<section class="table-header">
-		<div>Cash: {formatNumber($cash)}</div>
-		<div class="flex-filler"></div>
-		<div class="bank-box">
-			<div>Bank: {formatNumber($bank)}</div>
-			{#if $bank === 0}
-				<button on:click="onclick('deposit')">Deposit</button>
-				<button on:click="onclick('borrow')">Borrow</button>
-			{:elseif $bank < 0}
-				<button on:click="onclick('repay')">Repay</button>
-				<button on:click="onclick('borrow')">Borrow</button>
-			{:else}
-				<button on:click="onclick('deposit')">Deposit</button>
-				<button on:click="onclick('withdraw')">Withdraw</button>
-			{/if}
-		</div>
+<section>
+	<h1>Money</h1>
+	<div class="cash-box">Cash: {formatNumber($cash)}</div>
+	<div class="bank-box">Bank: {formatNumber($bank)}</div>
+
+	{#if $bank === 0}
+		<button on:click="onclick('deposit')">Deposit</button>
+		<button on:click="onclick('loan')">Loan</button>
+	{:elseif $bank < 0}
+		<button on:click="onclick('repay')">Repay</button>
+		<button on:click="onclick('loan')">Loan</button>
+	{:else}
+		<button on:click="onclick('deposit')">Deposit</button>
+		<button on:click="onclick('withdraw')">Withdraw</button>
+	{/if}
 </section>
 
 <script>
@@ -39,7 +38,7 @@ export default {
 			amount = parseInt(amount, 10);
 
 
-			if (action === 'withdraw' || action === 'borrow') this.store.withdraw(amount);
+			if (action === 'withdraw' || action === 'loan') this.store.withdraw(amount);
 			else {	// deposit, repay
 				if (amount > cash) return alert('You don\'t have enough cash!');
 				this.store.deposit(amount);

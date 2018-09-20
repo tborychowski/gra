@@ -10,13 +10,13 @@
 				<td></td>
 			</tr></thead>
 			<tbody>
-				{#each $cargo as item}
+				{#each Object.entries($cargo) as [itemId, item]}
 				<tr>
-					<td class="item-name">{item.id}</td>
-					<td>{item.amount} {item.unit || 'ton'}s</td>
-					<td>{formatNumber(item.price)}</td>
-					<td>{$getItemPrice(item)}</td>
-					<td><button on:click="sell(item)">Sell</button></td>
+					<td class="item-name">{$models.wares[itemId].name}</td>
+					<td>{item.amount}</td>
+					<td>{item.price}</td>
+					<td>{$prices[itemId] && $prices[itemId].price}</td>
+					<td><button on:click="sell(itemId, item)">Sell</button></td>
 				</tr>
 				{/each}
 			</tbody>
@@ -31,12 +31,14 @@
 				<td></td>
 			</tr></thead>
 			<tbody>
-				{#each $location.prices as item}
-				<tr>
-					<td class="item-name">{item.id}</td>
-					<td>{$getItemPrice(item)}</td>
-					<td><button on:click="buy(item)">Buy</button></td>
-				</tr>
+				{#each Object.entries($prices) as [itemId, item]}
+					{#if item.show}
+					<tr>
+						<td class="item-name">{item.name}</td>
+						<td>{item.price}</td>
+						<td><button on:click="buy(itemId, item)">Buy</button></td>
+					</tr>
+					{/if}
 				{/each}
 			</tbody>
 		</table>
@@ -46,29 +48,25 @@
 
 <script>
 import Data from '../data';
-import {formatNumber} from '../util';
 
 export default {
 	store: () => Data.Store,
-	helpers: {
-		formatNumber
-	},
 	methods: {
-		sell (item) {
+		sell (itemId, item) {
 			let amount = window.prompt('How much?', item.amount);
 			if (!amount) return;
 			amount = parseInt(amount, 10);
-			this.store.sell(item, amount);
+			this.store.sell(itemId, amount);
 		},
 
-		buy (item) {
+		buy (itemId, item) {
 			const {cash} = this.store.get();
 			const max = Math.floor(cash / item.price);
 			let amount = window.prompt('How much?', max);
 			if (!amount) return;
 			amount = parseInt(amount, 10);
 			if (amount > max) return alert('You don\'t have enough cash!');
-			this.store.buy(item, amount);
+			this.store.buy(itemId, amount);
 		}
 	}
 };

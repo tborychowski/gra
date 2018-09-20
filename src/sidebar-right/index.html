@@ -1,0 +1,32 @@
+<div class="sidebar-right">
+	<h2>Locations</h2>
+	<ul class="locations">
+		{#each Object.entries($models.locations) as [locationId, location]}
+		<li>
+			<a href="#"
+				on:click="goto(locationId, event)"
+				class="{locationId} {locationId === $locationId ? 'active' : ''}">{location.name}</a>
+		</li>
+		{/each}
+	</ul>
+</div>
+
+
+<script>
+import Data from '../data';
+
+export default {
+	store: () => Data.Store,
+
+	oncreate () {
+		this.goto('london');
+	},
+
+	methods: {
+		goto (locationId, ev) {
+			if (ev) ev.preventDefault();
+			this.store.goto(locationId);
+		}
+	}
+};
+</script>

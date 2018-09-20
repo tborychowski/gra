@@ -1,14 +1,16 @@
-<Sidebar ref:Sidebar></Sidebar>
+<SidebarLeft ref:SidebarLeft></SidebarLeft>
 <Main ref:Main></Main>
+<SidebarRight ref:SidebarRight></SidebarRight>
 
 <script>
-import Sidebar from '../sidebar';
+import SidebarLeft from '../sidebar-left';
+import SidebarRight from '../sidebar-right';
 import Main from '../main';
 import Data from '../data';
 
 
 export default {
-	components: { Sidebar, Main },
+	components: { SidebarLeft, SidebarRight, Main },
 	store: () => Data.Store,
 	oncreate () {
 		// this.load();

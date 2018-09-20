@@ -1,6 +1,6 @@
 <section>
-	<h2>Day {$day}, {$location.name}</h2>
-	<p>{$location.description}</p>
+	<h2>Day {$day}, {$models.locations[$locationId].name}</h2>
+	<p>{$models.locations[$locationId].description}</p>
 </section>
 
 <script>
