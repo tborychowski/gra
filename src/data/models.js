@@ -7,18 +7,25 @@ const locations = {
 	amsterdam: { name: 'Amsterdam', priceMod: 1.0, description: 'Nice looking port, covered with stores and shops.', },
 	hamburg:   { name: 'Hamburg',   priceMod: 1.0, description: 'Nice looking port, covered with stores and shops.', },
 	nassau:    { name: 'Nassau',    priceMod: 0.9, description: 'Light breeze cools the hot air from the west. Pirate\'s nest welcomes you.', },
-	macau:     { name: 'Macau',     priceMod: 1.0, description: 'Place is crowded with weirdly dressed people.', },
+	dakar:     { name: 'Dakar',     priceMod: 0.8, description: 'Extremely hot. Extremely loud. Dangerous even.', },
+	capetown:  { name: 'Cape Town', priceMod: 0.8, description: 'Hot but also wet. Fells like in a cauldron. Or a microwave.', },
 	bombay:    { name: 'Bombay',    priceMod: 0.8, description: 'Smell of oriental spices fills your nose.', },
+	macau:     { name: 'Macau',     priceMod: 1.0, description: 'Place is crowded with weirdly dressed people.', },
 };
 
 const distances = {
-	london:    { amsterdam: 200, hamburg: 400,  nassau: 3700,  bombay: 10500, macau: 13200 },
-	amsterdam: { hamburg:   250, nassau: 4000,  bombay: 10700, macau: 13400 },
-	hamburg:   { nassau:   4100, bombay: 10900, macau: 13600 },
-	nassau:    { bombay:  11000, macau:   13500 },
-	bombay:    { macau:   3700 }
+	london:    { amsterdam: 200, hamburg: 400, dakar: 2400, nassau: 3700, capetown: 6000, bombay: 10500, macau: 13200 },
+	amsterdam: {                 hamburg: 250, dakar: 2600, nassau: 4000, capetown: 6200, bombay: 10700, macau: 13400 },
+	hamburg:   {                               dakar: 2800, nassau: 4100, capetown: 6400, bombay: 10900, macau: 13600 },
+	dakar:     {                               	            nassau: 3500, capetown: 3600, bombay:  8100, macau: 10800 },
+	nassau:    {                                                          capetown: 6500, bombay: 11000, macau: 13500 },
+	capetown:  {                                                                          bombay:  4500, macau:  7200 },
+	bombay:    {                                                                                         macau:  3700 },
 };
 
+// https://www.distance-cities.com/
+// london - brest - acoruna - dakar - capetown - srilanka - singapore - macau
+//       250     350      1800    3600        4400       1500       1300
 // - london-bombay: 10500
 // - london-brest: 250
 // - brest-acoruna: 350
@@ -46,16 +53,14 @@ const wares = {
 
 const ships = {
 	sloop: {
-		type: 'sloop',
+		name: 'Sloop',
 		description: 'Small vessel, but it floats.',
 		travelCostMod: 1,
-		stats: {
-			cargo:  { current: 0, max: 25 },
-			guns:   { current: 0, max: 4 },
-			damage: { current: 0, max: 10 },
-			crew:   { current: 0, max: 25, min: 5 },
-			speed:  { empty: 80, full: 40 },
-		}
+		cargo:  { max: 25 },
+		guns:   { max: 4 },
+		damage: { max: 10 },
+		crew:   { max: 25, min: 5 },
+		speed:  { empty: 80, full: 40 },
 	},
 };
 

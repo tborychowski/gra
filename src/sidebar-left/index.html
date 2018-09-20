@@ -13,16 +13,6 @@ import Ship from './ship';
 export default {
 	components: { Money, Ship },
 	store: () => Data.Store,
-
-	oncreate () {
-		this.goto('london');
-	},
-
-	methods: {
-		goto (locationId, ev) {
-			if (ev) ev.preventDefault();
-			this.store.goto(locationId);
-		}
-	}
+	methods: {}
 };
 </script>

@@ -4,11 +4,7 @@
 
 
 ## Roadmap
-- if buying more stuff - make sure price shown in cargo is average!
-- add distances (in days) and travel cost
-- add living cost per day (maybe per city?)
-
-
+- replace alerts with nice modals, where e.g. buying & selling will show live figures
 
 - images for locations (thumbs in the sidebar, big in the main location box)
 - history arrows (up, down, right) for prices going up or down)
@@ -17,7 +13,7 @@
 - maybe icons images for wares?
 - possibly map for locations & navigation? with icons for ships?
 - cargo progressbar
--
+- damage progressbar
 
 
 ## Similar

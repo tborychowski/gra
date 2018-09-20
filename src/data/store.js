@@ -3,16 +3,23 @@ import models from './models';
 import {rand} from '../util';
 
 const data = {
-	day: 0,
+	day: 1,
 	locationId: 'london',
-	cash: 0,
+	cash: 100,
 	bank: 0,
+	shipId: 'sloop',
 	cargo: {
 		wheat: { amount: 25, price: 0 },
 	},
 	prices: {},
 	models
 };
+
+const COST_OF_LIVING_PER_DAY = 3;
+const TRAVEL_COST_PER_MILE = 0.1;
+
+const getDistance = (from, to) => models.distances[from] && models.distances[from][to] || models.distances[to][from] || 0;
+const getLivingCost = (locationId) => Math.floor(models.locations[locationId].priceMod * COST_OF_LIVING_PER_DAY);
 
 
 class GameStore extends Store {
@@ -26,33 +33,51 @@ class GameStore extends Store {
 		return price;
 	}
 
-
-	goto (locationId) {
-		// INCREASE DAY
-		const day = this.get().day + 1;
-
-		// GENERATE PRICES FOR A LOCATION
+	generatePrices (locationId) {
+		locationId = locationId || this.get().locationId;
 		const loc = models.locations[locationId];
 		const prices = JSON.parse(JSON.stringify(models.wares));
 		for (const [, ware] of Object.entries(prices)) {
 			ware.price = this.generateItemPrice(ware, loc);
 			ware.show = Math.random() < ware.showChance;
 		}
+		this.set({ prices });
+	}
+
+
+	goto (locationId) {
+		// INCREASE DAY
+		const day = this.get().day + 1;
+
+		// GENERATE PRICES FOR A LOCATION
+		this.generatePrices(locationId);
 
 		// CALCULATE BANK FEES
 		let bank = this.get().bank;
 		if (bank < 0) bank = Math.ceil(bank * 1.15);
 
-		this.set({ locationId, day, bank, prices });
+		// SUBTRACT COST OF LIVING
+		let cash = this.get().cash;
+		let cost = getLivingCost(locationId);
+		if (cash > cost) cash -= cost;
+		else {
+			cost -= cash;
+			cash = 0;
+			bank -= cost;
+		}
+
+		this.set({ locationId, day, cash, bank });
 	}
 
 	buy (itemId, amount) {
 		let {cash, cargo, prices} = this.get();
 		let price = prices[itemId].price;
-		cash -= price * amount;
+		const newTotal = price * amount;										// price of new cargo
+		cash -= newTotal;
 		if (cargo[itemId]) {
+			const oldTotal = cargo[itemId].price * cargo[itemId].amount;		// price of old cargo
 			amount += cargo[itemId].amount;
-			price = (cargo[itemId].price + price) / amount;
+			price = Math.round((oldTotal + newTotal) / amount);					// avg price of all cargo
 		}
 		cargo[itemId] = { amount, price };
 		this.set({ cash, cargo });
@@ -86,9 +111,12 @@ class GameStore extends Store {
 
 const store = new GameStore(data);
 
-store.compute('location', ['locationId'], (loc) => models.locations[loc]);
-
-store.compute('cargoLoad', ['cargo'], (cargo) => Object.values(cargo).map(i => i.amount).reduce((p, c) => (p += c), 0));
+store.compute('location', ['locationId'], loc => models.locations[loc]);
+store.compute('ship', ['shipId'], ship => models.ships[ship]);
+store.compute('cargoLoad', ['cargo'], cargo => Object.values(cargo).map(i => i.amount).reduce((p, c) => (p += c), 0));
+store.compute('getDistance', ['locationId'], from => to => getDistance(from, to));
+store.compute('getTravelCost', ['locationId'], from => to => getDistance(from, to) * TRAVEL_COST_PER_MILE);
+store.compute('livingCost', ['locationId'], loc => getLivingCost(loc));
 
 
 export default store;

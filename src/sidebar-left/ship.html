@@ -1,10 +1,10 @@
 <section>
 	<h1>Ship</h1>
 	<p>
-		Schooner<br>
-		Cargo: {$cargoLoad}/300<br>
-		Guns: 0/4<br>
-		Damage: 0/100<br>
+		<b>{$ship.name}</b><br>
+		Cargo: {$cargoLoad}/{$ship.cargo.max}<br>
+		Guns: 0/{$ship.guns.max}<br>
+		Damage: 0/{$ship.damage.max}<br>
 	</p>
 	<button>Upgrade</button>
 </section>

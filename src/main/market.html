@@ -60,11 +60,13 @@ export default {
 		},
 
 		buy (itemId, item) {
-			const {cash} = this.store.get();
-			const max = Math.floor(cash / item.price);
+			const {cash, cargoLoad, ship} = this.store.get();
+			let max = Math.floor(cash / item.price);
+			max = Math.min(max, ship.cargo.max - cargoLoad);
 			let amount = window.prompt('How much?', max);
 			if (!amount) return;
 			amount = parseInt(amount, 10);
+			if (cargoLoad + amount > ship.cargo.max) return alert('You don\'t have enough room!');
 			if (amount > max) return alert('You don\'t have enough cash!');
 			this.store.buy(itemId, amount);
 		}
