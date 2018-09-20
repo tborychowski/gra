@@ -34,6 +34,11 @@ export default {
 	methods: {
 		goto (locationId, ev) {
 			if (ev) ev.preventDefault();
+
+			const { cash, getTravelCost } = this.store.get();
+			const cost = getTravelCost(locationId);
+			console.log(cost);
+			if (cost > cash) return alert('You can\'t afford to travel to this location!')
 			this.store.goto(locationId);
 		}
 	}

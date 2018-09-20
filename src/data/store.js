@@ -15,8 +15,8 @@ const data = {
 	models
 };
 
-const COST_OF_LIVING_PER_DAY = 3;
-const TRAVEL_COST_PER_MILE = 0.1;
+const COST_OF_LIVING_PER_DAY = 2;
+const TRAVEL_COST_PER_MILE = 0.05;
 
 const getDistance = (from, to) => models.distances[from] && models.distances[from][to] || models.distances[to][from] || 0;
 const getLivingCost = (locationId) => Math.floor(models.locations[locationId].priceMod * COST_OF_LIVING_PER_DAY);
@@ -56,14 +56,21 @@ class GameStore extends Store {
 		let bank = this.get().bank;
 		if (bank < 0) bank = Math.ceil(bank * 1.15);
 
-		// SUBTRACT COST OF LIVING
+		const currentLocationId = this.get().locationId;
 		let cash = this.get().cash;
-		let cost = getLivingCost(locationId);
-		if (cash > cost) cash -= cost;
+
+		// SUBTRACT COST OF TRAVEL
+		if (currentLocationId !== locationId) cash -= this.get().getTravelCost(locationId);
+
+		// SUBTRACT COST OF LIVING
 		else {
-			cost -= cash;
-			cash = 0;
-			bank -= cost;
+			let cost = getLivingCost(locationId);
+			if (cash > cost) cash -= cost;
+			else {
+				cost -= cash;
+				cash = 0;
+				bank -= cost;
+			}
 		}
 
 		this.set({ locationId, day, cash, bank });
