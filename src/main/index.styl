@@ -2,12 +2,9 @@
 
 
 main
-	position absolute
-	left sidebar-w
-	right sidebar-w
-	top 5
-	bottom 5
+	margin 5 0
 	padding 0 10
+	flex 1
 	display flex
 	flex-flow column
 	background #eee
@@ -28,6 +25,8 @@ main
 		&:last-child
 			margin-bottom 200px
 
+	x-window
+		color #eee
 
 .table-header
 	width 100%

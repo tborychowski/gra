@@ -18,7 +18,19 @@
 		</li>
 		{/each}
 	</ul>
+
+	<x-window ref:window>
+		<h1 class="title">Travel</h1>
+		<div class="content">
+			<h2>You can't afford to travel to this location!</h2>
+		</div>
+		<div class="buttons">
+			<button class="btn success" on:click="hidewindow()">OK</button>
+		</div>
+	</x-window>
 </div>
+
+
 
 
 <script>
@@ -32,13 +44,17 @@ export default {
 	},
 
 	methods: {
+		hidewindow () {
+			this.refs.window.hide();
+		},
+
 		goto (locationId, ev) {
 			if (ev) ev.preventDefault();
 
 			const { cash, getTravelCost } = this.store.get();
 			const cost = getTravelCost(locationId);
 			console.log(cost);
-			if (cost > cash) return alert('You can\'t afford to travel to this location!')
+			if (cost > cash) return this.refs.window.show();
 			this.store.goto(locationId);
 		}
 	}

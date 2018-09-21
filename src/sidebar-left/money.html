@@ -4,47 +4,84 @@
 	<div class="bank-box">Bank: {formatNumber($bank)}</div>
 
 	{#if $bank === 0}
-		<button on:click="onclick('deposit')">Deposit</button>
-		<button on:click="onclick('loan')">Loan</button>
+		<button class="btn" on:click="onclick('deposit', this)">Deposit</button>
+		<button class="btn" on:click="onclick('loan', this)">Loan</button>
 	{:elseif $bank < 0}
-		<button on:click="onclick('repay')">Repay</button>
-		<button on:click="onclick('loan')">Loan</button>
+		<button class="btn" on:click="onclick('repay', this)">Repay</button>
+		<button class="btn" on:click="onclick('loan', this)">Loan</button>
 	{:else}
-		<button on:click="onclick('deposit')">Deposit</button>
-		<button on:click="onclick('withdraw')">Withdraw</button>
+		<button class="btn" on:click="onclick('deposit', this)">Deposit</button>
+		<button class="btn" on:click="onclick('withdraw', this)">Withdraw</button>
 	{/if}
 </section>
 
+<x-window ref:window>
+	<h1 class="title">Bank</h1>
+	<div class="content">
+		<h2>How much do you want to {action}?</h2>
+		<form ref:form on:submit="onsubmit(event)">
+			<input bind:value="amount" class="{error ? 'error' : ''}">
+		</form>
+		{#if error}
+			<div class="error">{error}</div>
+		{/if}
+	</div>
+	<div class="buttons">
+		<button class="btn" on:click="hidewindow()">Cancel</button>
+		<button class="btn success" on:click="onsubmit()">OK</button>
+	</div>
+</x-window>
+
+
 <script>
+import Modal from '../modal';
 import Data from '../data';
 import {formatNumber} from '../util';
 
 export default {
 	store: () => Data.Store,
-	helpers: {
-		formatNumber
+	helpers: { formatNumber },
+	data () {
+		return { action: '', amount: 10, error: '' }
 	},
+	oncreate () { },
 	methods: {
-		onclick (action) {
+		showwindow (el) { this.refs.window.show(el); },
+		hidewindow () { this.refs.window.hide(); },
+
+		onclick (action, el) {
 			const {cash, bank} = this.store.get();
-			let amount = 1000;
+			let {amount} = this.get();
 
 			if (action === 'repay') amount = Math.min(Math.abs(bank), cash);
 			else if (action === 'deposit') amount = cash;
 			else if (action === 'withdraw') amount = bank;
+			else amount = 100;
 
-			amount = window.prompt('How much?', amount);
-			if (!amount) return;
+			this.set({ action, amount, error: '' });
+			this.showwindow(el);
+		},
+
+		onsubmit (e) {
+			if (e) e.preventDefault();
+			this.set({ error: '' });
+
+			const {cash, bank} = this.store.get();
+			let {action, amount} = this.get();
 			amount = parseInt(amount, 10);
 
+			if (!amount) return;
 
 			if (action === 'withdraw' || action === 'loan') this.store.withdraw(amount);
 			else {	// deposit, repay
-				if (amount > cash) return alert('You don\'t have enough cash!');
+				if (amount > cash) return this.set({ error: 'You don\'t have enough cash!' });
 				this.store.deposit(amount);
 			}
 
+			this.hidewindow();
 		},
+
+
 	}
 };
 </script>

@@ -16,7 +16,7 @@
 					<td>{item.amount}</td>
 					<td>{item.price}</td>
 					<td>{$prices[itemId] && $prices[itemId].price}</td>
-					<td><button on:click="sell(itemId, item)">Sell</button></td>
+					<td><button class="btn" on:click="onclick('sell', itemId, item, this)">Sell</button></td>
 				</tr>
 				{/each}
 			</tbody>
@@ -36,13 +36,33 @@
 					<tr>
 						<td class="item-name">{item.name}</td>
 						<td>{item.price}</td>
-						<td><button on:click="buy(itemId, item)">Buy</button></td>
+						<td><button class="btn" on:click="onclick('buy', itemId, item, this)">Buy</button></td>
 					</tr>
 					{/if}
 				{/each}
 			</tbody>
 		</table>
 	</div>
+
+
+	<x-window ref:window>
+		<h1 class="title">Market</h1>
+		<div class="content">
+			<h2>How much do you want to {action}?</h2>
+			<form ref:form on:submit="onsubmit(event)">
+				<input bind:value="amount" class="{error ? 'error' : ''}">
+			</form>
+			{#if error}
+				<div class="error">{error}</div>
+			{:elseif info}
+				<div class="info">{info}</div>
+			{/if}
+		</div>
+		<div class="buttons">
+			<button class="btn" on:click="hidewindow()">Cancel</button>
+			<button class="btn success" on:click="onsubmit()">OK</button>
+		</div>
+	</x-window>
 </section>
 
 
@@ -51,25 +71,66 @@ import Data from '../data';
 
 export default {
 	store: () => Data.Store,
+	data () {
+		return {
+			action: 'sell',
+			amount: 0,
+			itemId: null,
+			item: null,
+			error: '',
+			info: '',
+		};
+	},
+	onstate({ changed, current, previous }) {
+		if (changed.amount) this.calcInfo(current.amount);
+	},
+
 	methods: {
-		sell (itemId, item) {
-			let amount = window.prompt('How much?', item.amount);
-			if (!amount) return;
-			amount = parseInt(amount, 10);
-			this.store.sell(itemId, amount);
+
+		hidewindow () {
+			this.refs.window.hide();
+			this.set({ amount: 0, error: '' });
+		},
+		showwindow (el) { this.refs.window.show(el); },
+
+		calcInfo (amount) {
+			const {action, item, itemId} = this.get();
+			if (!item) return;
+			const itemPrice = (action === 'sell' ? this.store.get().prices[itemId].price : item.price);
+			this.set({info: `${amount} x ${itemPrice} = ${amount * itemPrice}` });
 		},
 
-		buy (itemId, item) {
-			const {cash, cargoLoad, ship} = this.store.get();
-			let max = Math.floor(cash / item.price);
-			max = Math.min(max, ship.cargo.max - cargoLoad);
-			let amount = window.prompt('How much?', max);
-			if (!amount) return;
+		onclick (action, itemId, item, el) {
+			let amount = 0;
+			if (action === 'sell') amount = item.amount;
+			else {
+				const {cash, cargoLoad, ship} = this.store.get();
+				const max = Math.floor(cash / item.price);
+				amount = Math.min(max, ship.cargo.max - cargoLoad);
+			}
+
+			this.set({ itemId, item, action, amount, error: '' });
+			this.showwindow(el);
+		},
+
+		onsubmit (e) {
+			if (e) e.preventDefault();
+			this.set({ error: '' });
+
+			let {action, amount, item, itemId} = this.get();
 			amount = parseInt(amount, 10);
-			if (cargoLoad + amount > ship.cargo.max) return alert('You don\'t have enough room!');
-			if (amount > max) return alert('You don\'t have enough cash!');
-			this.store.buy(itemId, amount);
-		}
+
+			if (action === 'buy') {
+				const {cash, cargoLoad, ship} = this.store.get();
+				const max = Math.floor(cash / item.price);
+				if (cargoLoad + amount > ship.cargo.max) return this.set({ error: 'You don\'t have enough room!' });
+				if (amount > max) return this.set({ error: 'You don\'t have enough cash!' });
+
+				this.store.buy(itemId, amount);
+			}
+			else this.store.sell(itemId, amount);
+			this.hidewindow();
+		},
 	}
 };
 </script>
