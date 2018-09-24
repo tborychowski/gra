@@ -66,13 +66,18 @@ export default {
 			if (e) e.preventDefault();
 			this.set({ error: '' });
 
-			const {cash, bank} = this.store.get();
+			const {cash, bank, totalWealth} = this.store.get();
 			let {action, amount} = this.get();
 			amount = parseInt(amount, 10);
 
 			if (!amount) return;
 
-			if (action === 'withdraw' || action === 'loan') this.store.withdraw(amount);
+			if (action === 'withdraw' || action === 'loan') {
+				if (Math.abs(bank - amount) > totalWealth) {
+					return this.set({ error: 'You can only borrow as much as you own!' });
+				}
+				this.store.withdraw(amount);
+			}
 			else {	// deposit, repay
 				if (amount > cash) return this.set({ error: 'You don\'t have enough cash!' });
 				this.store.deposit(amount);

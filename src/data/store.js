@@ -9,12 +9,13 @@ const data = {
 	bank: 0,
 	damage: 0,
 	inventory: {
-		sloop: { amount: 1, price: 0 }
+		sloop: { amount: 1, price: 1000 }
 	},
 	cargo: {
 		wheat: { amount: 25, price: 0 },
 	},
 	prices: {},
+	depreciation: 0.75,
 	models
 };
 
@@ -104,8 +105,8 @@ class GameStore extends Store {
 	}
 
 	sellInventory (itemId) {
-		let  {cash, inventory} = this.get();
-		const price = models.inventory[itemId].price;
+		let  {cash, inventory, depreciation} = this.get();
+		const price = models.inventory[itemId].price  * depreciation;
 		cash += price;
 		if (inventory[itemId].amount < 2) delete inventory[itemId];
 		else inventory[itemId].amount -= 1;
@@ -149,9 +150,21 @@ store.compute('fullInventory', ['inventory'], inventory => {
 });
 store.compute('cargoLoad', ['cargo'], cargo => Object.values(cargo).map(i => i.amount).reduce((p, c) => (p += c), 0));
 store.compute('maxCargoLoad', ['fullInventory'], inv => inv.map(i => i.amount * i.cargo).reduce((p, c) => (p += c), 0));
+store.compute('totalWealth', ['fullInventory', 'depreciation'], (inv, depreciation) => {
+	return inv.map(i => i.amount * i.price * depreciation).reduce((p, c) => (p += c), 0);
+});
+
 
 store.compute('getDistance', ['locationId'], from => to => getDistance(from, to));
-store.compute('getTravelCost', ['locationId'], from => to => Math.floor(getDistance(from, to) * TRAVEL_COST_PER_MILE));
+store.compute('getTravelCost', ['locationId', 'inventory'], (from, inventory) => to => {
+	const baseCost = Math.floor(getDistance(from, to) * TRAVEL_COST_PER_MILE);
+	let totalCost = 0;
+	Object.keys(inventory).map(id => {
+		const item =  models.inventory[id];
+		if (item.cargo) totalCost += item.travelCostMod * baseCost;
+	});
+	return Math.floor(totalCost);
+});
 
 
 export default store;

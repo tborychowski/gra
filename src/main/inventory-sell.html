@@ -3,7 +3,7 @@
 	<thead><tr>
 		<td class="name-col">Name</td>
 		<td class="price-col">Amount</td>
-		<td class="price-col">Paid</td>
+		<td class="price-col">Price</td>
 		<td class="btn-col"></td>
 	</tr></thead>
 	<tbody>
@@ -13,7 +13,7 @@
 					{#if invItem.cargo} (cargo +{invItem.cargo}){/if}
 				</td>
 				<td class="price-col">{invItem.amount}</td>
-				<td class="price-col">{invItem.price}</td>
+				<td class="price-col">{invItem.price * $depreciation}</td>
 				<td class="btn-col"><button class="btn" on:click="sellInventory(invItem.id, invItem, this)">Sell</button></td>
 			</tr>
 		{/each}
@@ -58,10 +58,10 @@ export default {
 		hideconfirm () { this.refs.confirmWindow.hide(); },
 
 		sellInventory (itemId, item, btn) {
-			const {cargoLoad, maxCargoLoad, models} = this.store.get();
+			const {cargoLoad, maxCargoLoad, models, depreciation} = this.store.get();
 			if (item.cargo && maxCargoLoad - item.cargo < cargoLoad) return this.showalert(btn);
 
-			const price = models.inventory[itemId].price;
+			const price = models.inventory[itemId].price * depreciation;
 			this.set({ itemId, item, price });
 			this.showconfirm(btn);
 		},
