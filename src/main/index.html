@@ -1,14 +1,26 @@
 <main>
 	<Location/>
-	<Market/>
+	<section class="store-front">
+		<div class="table-wrap">
+			<CargoSell/><br>
+			<InventorySell/>
+		</div>
+		<div class="table-wrap">
+			<CargoBuy/><br>
+			<InventoryBuy/>
+		</div>
+	</section>
 </main>
 
 
 <script>
 import Location from './location';
-import Market from './market';
+import CargoSell from './cargo-sell';
+import CargoBuy from './cargo-buy';
+import InventorySell from './inventory-sell';
+import InventoryBuy from './inventory-buy';
 
 export default {
-	components: { Location, Ship, Market },
+	components: { Location, CargoSell, CargoBuy, InventorySell, InventoryBuy },
 };
 </script>

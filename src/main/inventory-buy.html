@@ -1,0 +1,73 @@
+<h2>Inventory</h2>
+<table>
+	<thead><tr>
+		<td class="name-col">Name</td>
+		<td class="price-col">Tonnage</td>
+		<td class="price-col">Price</td>
+		<td class="btn-col"></td>
+	</tr></thead>
+	<tbody>
+		{#each Object.entries($models.inventory) as [itemId, invItem]}
+			<tr>
+				<td class="name-col">{invItem.name}</td>
+				<td class="price-col">{invItem.cargo}</td>
+				<td class="price-col">{invItem.price}</td>
+				<td class="btn-col"><button class="btn" on:click="buyInventory(itemId, invItem, this)">Buy</button></td>
+			</tr>
+		{/each}
+	</tbody>
+</table>
+
+<x-window ref:confirmWindow>
+	<h1 class="title">Buy Inventory</h1>
+	<div class="content"><h2>Are you sure you wish to buy the {item.name} for {price}?</h2></div>
+	<div class="buttons">
+		<button class="btn" on:click="hideconfirm()">Cancel</button>
+		<button class="btn success" on:click="submitconfirm()">Sell</button>
+	</div>
+</x-window>
+
+<x-window ref:alertWindow>
+	<h1 class="title">Buy Inventory</h1>
+	<div class="content"><h2>You don't have  enough cash to buy the {item.name}!</h2></div>
+	<div class="buttons"><button class="btn success" on:click="hidealert()">OK</button></div>
+</x-window>
+
+
+<script>
+import Data from '../data';
+
+export default {
+	store: () => Data.Store,
+	data () {
+		return {
+			amount: 0,
+			itemId: null,
+			item: {name: ''},
+			price: 0,
+		};
+	},
+
+	methods: {
+		showalert (el) { this.refs.alertWindow.show(el); },
+		hidealert () { this.refs.alertWindow.hide(); },
+
+		showconfirm (el) { this.refs.confirmWindow.show(el); },
+		hideconfirm () { this.refs.confirmWindow.hide(); },
+
+		buyInventory (itemId, item, btn) {
+			const {cash, models} = this.store.get();
+			const price = models.inventory[itemId].price;
+			if (price > cash) return this.showalert(btn);
+			this.set({ itemId, item, price });
+			this.showconfirm(btn);
+		},
+
+		submitconfirm () {
+			const {itemId} = this.get();
+			this.store.buyInventory(itemId);
+			this.hideconfirm();
+		}
+	}
+};
+</script>

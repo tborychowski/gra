@@ -1,0 +1,76 @@
+<h2>Inventory</h2>
+<table>
+	<thead><tr>
+		<td class="name-col">Name</td>
+		<td class="price-col">Amount</td>
+		<td class="price-col">Paid</td>
+		<td class="btn-col"></td>
+	</tr></thead>
+	<tbody>
+		{#each $fullInventory as invItem}
+			<tr>
+				<td class="name-col">{invItem.name}
+					{#if invItem.cargo} (cargo +{invItem.cargo}){/if}
+				</td>
+				<td class="price-col">{invItem.amount}</td>
+				<td class="price-col">{invItem.price}</td>
+				<td class="btn-col"><button class="btn" on:click="sellInventory(invItem.id, invItem, this)">Sell</button></td>
+			</tr>
+		{/each}
+	</tbody>
+</table>
+
+<x-window ref:confirmWindow>
+	<h1 class="title">Sell Inventory</h1>
+	<div class="content"><h2>Are you sure you wish to sell the {item.name} for {price}?</h2></div>
+	<div class="buttons">
+		<button class="btn" on:click="hideconfirm()">Cancel</button>
+		<button class="btn success" on:click="submitconfirm()">Sell</button>
+	</div>
+</x-window>
+
+<x-window ref:alertWindow>
+	<h1 class="title">Sell Inventory</h1>
+	<div class="content"><h2>The {item.name} is loaded with your cargo. Sell the cargo first!</h2></div>
+	<div class="buttons"><button class="btn success" on:click="hidealert()">OK</button></div>
+</x-window>
+
+
+<script>
+import Data from '../data';
+
+export default {
+	store: () => Data.Store,
+	data () {
+		return {
+			amount: 0,
+			itemId: null,
+			item: {name:''},
+			price: 0,
+		};
+	},
+
+	methods: {
+		showalert (el) { this.refs.alertWindow.show(el); },
+		hidealert () { this.refs.alertWindow.hide(); },
+
+		showconfirm (el) { this.refs.confirmWindow.show(el); },
+		hideconfirm () { this.refs.confirmWindow.hide(); },
+
+		sellInventory (itemId, item, btn) {
+			const {cargoLoad, maxCargoLoad, models} = this.store.get();
+			if (item.cargo && maxCargoLoad - item.cargo < cargoLoad) return this.showalert(btn);
+
+			const price = models.inventory[itemId].price;
+			this.set({ itemId, item, price });
+			this.showconfirm(btn);
+		},
+
+		submitconfirm () {
+			const {itemId} = this.get();
+			this.store.sellInventory(itemId);
+			this.hideconfirm();
+		}
+	}
+};
+</script>

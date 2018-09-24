@@ -49,16 +49,38 @@ main
 		flex 1
 		margin-right 5
 		bg #ccc
-		padding 10
+		padding 10 0
 
 		&:last-child
 			margin-right 0
 			margin-left 5
 
+		h2
+			padding 5 5
+
 		table
 			width 100%
+			border-collapse collapse
 
+			td
+				padding 5 7
 
-		.item-name:first-letter
+			thead tr
+				bg #aaa
+				font-weight 600
+
+			tbody tr:hover
+				bg #bbb
+
+		.price-col
+			width 80
+			text-align right
+
+		.btn-col
+			text-align right
+			width 50
+			padding-left 15
+
+		.name-col:first-letter
 			text-transform uppercase
 

@@ -1,0 +1,83 @@
+<h2>Cargo ({$cargoLoad}/{$maxCargoLoad})</h2>
+<table>
+	<thead><tr>
+		<td class="name-col">Name</td>
+		<td class="price-col">Amount</td>
+		<td class="price-col">Paid</td>
+		<td class="price-col">Can get</td>
+		<td class="btn-col"></td>
+	</tr></thead>
+	<tbody>
+		{#each Object.entries($cargo) as [itemId, item]}
+		<tr>
+			<td class="name-col">{$models.wares[itemId].name}</td>
+			<td class="price-col">{item.amount}</td>
+			<td class="price-col">{item.price}</td>
+			<td class="price-col">{$prices[itemId] && $prices[itemId].price}</td>
+			<td class="btn-col"><button class="btn" on:click="sell(itemId, item, this)">Sell</button></td>
+		</tr>
+		{/each}
+	</tbody>
+</table>
+
+<x-window ref:window>
+	<h1 class="title">Market</h1>
+	<div class="content">
+		<h2>How much do you want to sell?</h2>
+		<form on:submit="onsubmit(event)">
+			<input bind:value="amount" class="{error ? 'error' : ''}">
+		</form>
+		{#if info}<div class="info">{info}</div>{/if}
+	</div>
+	<div class="buttons">
+		<button class="btn" on:click="hidewindow()">Cancel</button>
+		<button class="btn success" on:click="onsubmit()">Sell</button>
+	</div>
+</x-window>
+
+
+<script>
+import Data from '../data';
+
+export default {
+	store: () => Data.Store,
+	data () {
+		return {
+			amount: 0,
+			itemId: null,
+			item: null,
+			info: '',
+		};
+	},
+	onstate({ changed, current, previous }) {
+		if (changed.amount) this.calcInfo(current.amount);
+	},
+
+	methods: {
+		hidewindow () {
+			this.refs.window.hide();
+			this.set({ amount: 0 });
+		},
+		showwindow (el) { this.refs.window.show(el); },
+
+		calcInfo (amount) {
+			const {item, itemId} = this.get();
+			if (!item) return;
+			const itemPrice = this.store.get().prices[itemId].price;
+			this.set({info: `${amount} x ${itemPrice} = ${amount * itemPrice}` });
+		},
+
+		sell (itemId, item, el) {
+			this.set({ itemId, item, amount: item.amount });
+			this.showwindow(el);
+		},
+
+		onsubmit (e) {
+			if (e) e.preventDefault();
+			const {amount, itemId} = this.get();
+			this.store.sell(itemId, parseInt(amount, 10));
+			this.hidewindow();
+		},
+	}
+};
+</script>

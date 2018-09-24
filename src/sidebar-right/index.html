@@ -1,64 +1,12 @@
 <div class="sidebar-right">
-	<h2>Locations</h2>
-	<ul class="locations">
-		{#each Object.entries($models.locations) as [locationId, location]}
-		<li>
-			<a href="#"
-				on:click="goto(locationId, event)"
-				class="{locationId} {locationId === $locationId ? 'active' : ''}">
-				<b>{location.name}</b><br>
-				{#if $getDistance(locationId) > 0}
-					<small>Distance: {$getDistance(locationId)} miles</small><br>
-					<small>Travel Cost: {$getTravelCost(locationId)}</small>
-				{:else}
-					<small>You're here!</small><br>
-					<!-- <small>Cost of stay: {$livingCost}</small> -->
-				{/if}
-			</a>
-		</li>
-		{/each}
-	</ul>
-
-	<x-window ref:window>
-		<h1 class="title">Travel</h1>
-		<div class="content">
-			<h2>You can't afford to travel to this location!</h2>
-		</div>
-		<div class="buttons">
-			<button class="btn success" on:click="hidewindow()">OK</button>
-		</div>
-	</x-window>
 </div>
 
 
 
 
 <script>
-import Data from '../data';
 
 export default {
-	store: () => Data.Store,
-
-	oncreate () {
-		this.store.generatePrices();
-	},
-
-	methods: {
-		hidewindow () {
-			this.refs.window.hide();
-		},
-
-		goto (locationId, ev) {
-			if (ev) ev.preventDefault();
-
-			if (locationId === this.store.get().locationId) return;
-
-			const { cash, getTravelCost } = this.store.get();
-			const cost = getTravelCost(locationId);
-			console.log(cost);
-			if (cost > cash) return this.refs.window.show();
-			this.store.goto(locationId);
-		}
-	}
+	components: {  },
 };
 </script>

@@ -1,0 +1,68 @@
+@import "lib"
+
+x-window
+	bg #666
+
+	h1
+	.buttons
+		background #333
+		display flex
+		align-items center
+		border-color #666
+		border-style solid
+		border-width 0
+
+	h1
+		font-size 22px
+		padding 10 20
+		margin 0
+		border-radius 5px 5px 0 0
+		justify-content flex-start
+		border-bottom-width 1px
+
+	h2
+		margin 0
+		padding 0 0 15
+		display block
+		font-size 16px
+
+	.content
+		bg #444
+		padding 20
+
+	form
+		display flex
+		justify-content flex-end
+		flex-wrap wrap
+
+		input
+			text-align right
+			width 100
+
+			&.error
+				border-color #dc7284
+				background #c3808c
+				font-weight 600
+
+				&:focus
+					box-shadow 0 0 2px 1px #dc7284
+
+	.info
+		text-align right
+		padding 15 0 0
+
+	div.error
+		color #dc7284
+		padding 15 0 0
+		text-align center
+
+	.buttons
+		padding 10 20
+		margin 0
+		border-radius 0 0 5px 5px
+		justify-content flex-end
+		border-top-width 1px
+
+		button
+			margin-left 10
+			min-width 50px

@@ -1,18 +1,14 @@
 <div class="sidebar-left">
 	<Money/>
-	<Ship/>
+	<Travel/>
 </div>
 
 
 <script>
-import Data from '../data';
-import Money from './money';
-import Ship from './ship';
-
+import Money from '../money';
+import Travel from '../travel';
 
 export default {
-	components: { Money, Ship },
-	store: () => Data.Store,
-	methods: {}
+	components: { Money,  Travel },
 };
 </script>

@@ -51,23 +51,22 @@ const wares = {
 	tools   : { name: 'Tools',   showChance: 0.95, price: { min: 1000, max: 1050 }},
 };
 
-const ships = {
-	sloop: {
-		name: 'Sloop',
-		description: 'Small vessel, but it floats.',
-		travelCostMod: 1,
-		cargo: 25,
-		guns: 0,
-		damage: 10,
-		speed:  { empty: 80, full: 40 },
-	},
+const inventory = {
+	sloop:       { name: 'Sloop',            travelCostMod: 1.0, cargo: 25,   price: 1000, description: 'Small vessel, but it floats.' },
+	schooner:    { name: 'Schooner',         travelCostMod: 1.1, cargo: 100,  price: 4000, description: 'A biggger ship. Can take more cargo.' },
+	brig:        { name: 'Brig',             travelCostMod: 1.2, cargo: 300,  price: 12000, description: 'Formidable vessel. Decent storage.' },
+	frigatelite: { name: 'Light  Frigate',   travelCostMod: 1.5, cargo: 800,  price: 32000, description: 'Big ship. Can take loads of cargo.' },
+	frigate:     { name: 'Frigate',          travelCostMod: 1.8, cargo: 1200, price: 48000, description: 'Huge ship. Can take loads of cargo.' },
+	galleon:     { name: 'Galleon',          travelCostMod: 2.0, cargo: 1600, price: 64000, description: 'Huge ship. Can take loads of cargo.' },
+	line:        { name: 'Ship-of-the-Line', travelCostMod: 2.5, cargo: 2000, price: 80000, description: 'Enormous ship. Can take everything!' },
 };
+
 
 
 export default {
 	locations,
 	distances,
-	ships,
+	inventory,
 	events,
 	wares,
 };

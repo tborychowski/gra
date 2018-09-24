@@ -7,7 +7,10 @@ const data = {
 	locationId: 'london',
 	cash: 100,
 	bank: 0,
-	shipId: 'sloop',
+	damage: 0,
+	inventory: {
+		sloop: { amount: 1, price: 0 }
+	},
 	cargo: {
 		wheat: { amount: 25, price: 0 },
 	},
@@ -54,7 +57,7 @@ class GameStore extends Store {
 
 		// CALCULATE BANK FEES
 		let bank = this.get().bank;
-		if (bank < 0) bank = Math.ceil(bank * 1.15);
+		if (bank < 0) bank = Math.ceil(bank * 1.05);
 
 		const currentLocationId = this.get().locationId;
 		let cash = this.get().cash;
@@ -100,6 +103,24 @@ class GameStore extends Store {
 		this.set({ cash, cargo });
 	}
 
+	sellInventory (itemId) {
+		let  {cash, inventory} = this.get();
+		const price = models.inventory[itemId].price;
+		cash += price;
+		if (inventory[itemId].amount < 2) delete inventory[itemId];
+		else inventory[itemId].amount -= 1;
+		this.set({ cash, inventory });
+	}
+
+	buyInventory (itemId) {
+		let  {cash, inventory} = this.get();
+		const price = models.inventory[itemId].price;
+		cash -= price;
+		if (!inventory[itemId]) inventory[itemId] = {amount: 1, price};
+		else inventory[itemId].amount += 1;
+		this.set({ cash, inventory });
+	}
+
 	deposit (amount) {
 		let {cash, bank} = this.get();
 		cash -= amount;
@@ -119,11 +140,18 @@ class GameStore extends Store {
 const store = new GameStore(data);
 
 store.compute('location', ['locationId'], loc => models.locations[loc]);
-store.compute('ship', ['shipId'], ship => models.ships[ship]);
+store.compute('fullInventory', ['inventory'], inventory => {
+	const fullinv =  [];
+	for (const [id, item] of Object.entries(inventory)) {
+		fullinv.push(Object.assign({}, models.inventory[id], item, {id}));
+	}
+	return fullinv;
+});
 store.compute('cargoLoad', ['cargo'], cargo => Object.values(cargo).map(i => i.amount).reduce((p, c) => (p += c), 0));
+store.compute('maxCargoLoad', ['fullInventory'], inv => inv.map(i => i.amount * i.cargo).reduce((p, c) => (p += c), 0));
+
 store.compute('getDistance', ['locationId'], from => to => getDistance(from, to));
-store.compute('getTravelCost', ['locationId', 'ship'], (from, ship) => to => Math.floor(getDistance(from, to) * TRAVEL_COST_PER_MILE * ship.travelCostMod));
-store.compute('livingCost', ['locationId'], loc => getLivingCost(loc));
+store.compute('getTravelCost', ['locationId'], from => to => Math.floor(getDistance(from, to) * TRAVEL_COST_PER_MILE));
 
 
 export default store;
