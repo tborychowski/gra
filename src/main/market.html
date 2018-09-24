@@ -96,6 +96,15 @@ export default {
 		calcInfo (amount) {
 			const {action, item, itemId} = this.get();
 			if (!item) return;
+
+			this.set({ error: '' });
+			if (action === 'buy') {
+				const {cash, cargoLoad, ship} = this.store.get();
+				const max = Math.floor(cash / item.price);
+				if (cargoLoad + amount > ship.cargo) return this.set({ error: 'You don\'t have enough room!' });
+				if (amount > max) return this.set({ error: 'You don\'t have enough cash!' });
+			}
+
 			const itemPrice = (action === 'sell' ? this.store.get().prices[itemId].price : item.price);
 			this.set({info: `${amount} x ${itemPrice} = ${amount * itemPrice}` });
 		},
@@ -106,7 +115,7 @@ export default {
 			else {
 				const {cash, cargoLoad, ship} = this.store.get();
 				const max = Math.floor(cash / item.price);
-				amount = Math.min(max, ship.cargo.max - cargoLoad);
+				amount = Math.min(max, ship.cargo - cargoLoad);
 			}
 
 			this.set({ itemId, item, action, amount, error: '' });
@@ -115,20 +124,13 @@ export default {
 
 		onsubmit (e) {
 			if (e) e.preventDefault();
-			this.set({ error: '' });
 
-			let {action, amount, item, itemId} = this.get();
+			let {action, amount, item, itemId, error} = this.get();
 			amount = parseInt(amount, 10);
 
-			if (action === 'buy') {
-				const {cash, cargoLoad, ship} = this.store.get();
-				const max = Math.floor(cash / item.price);
-				if (cargoLoad + amount > ship.cargo.max) return this.set({ error: 'You don\'t have enough room!' });
-				if (amount > max) return this.set({ error: 'You don\'t have enough cash!' });
-
-				this.store.buy(itemId, amount);
-			}
+			if (action === 'buy' && error === '') this.store.buy(itemId, amount);
 			else this.store.sell(itemId, amount);
+
 			this.hidewindow();
 		},
 	}

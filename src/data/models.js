@@ -56,10 +56,9 @@ const ships = {
 		name: 'Sloop',
 		description: 'Small vessel, but it floats.',
 		travelCostMod: 1,
-		cargo:  { max: 25 },
-		guns:   { max: 4 },
-		damage: { max: 10 },
-		crew:   { max: 25, min: 5 },
+		cargo: 25,
+		guns: 0,
+		damage: 10,
 		speed:  { empty: 80, full: 40 },
 	},
 };

@@ -2,18 +2,46 @@
 	<h1>Ship</h1>
 	<p>
 		<b>{$ship.name}</b><br>
-		Cargo: {$cargoLoad}/{$ship.cargo.max}<br>
-		Guns: 0/{$ship.guns.max}<br>
-		Damage: 0/{$ship.damage.max}<br>
+		Cargo: {$cargoLoad}/{$ship.cargo}<br>
+		Guns: 0/{$ship.guns}<br>
+		Damage: 0/{$ship.damage}<br>
 	</p>
-	<button class="btn">Upgrade</button>
+	<button class="btn" on:click="showwindow(this)">Upgrade</button>
 </section>
+
+<x-window ref:window>
+	<h1 class="title">Ship</h1>
+	<div class="content">
+		<h2>Choose your upgrades?</h2>
+		<form ref:form on:submit="onsubmit(event)">
+			<label>Cargo hold: {$ship.cargo}</label>
+			<label>Guns: {$ship.guns}</label>
+			<label>Damage resistance: {$ship.damage}</label>
+		</form>
+	</div>
+	<div class="buttons">
+		<button class="btn" on:click="hidewindow()">Cancel</button>
+		<button class="btn success" on:click="onsubmit()">OK</button>
+	</div>
+</x-window>
+
 
 <script>
 import Data from '../data';
 
 export default {
 	store: () => Data.Store,
-	methods: {}
+	data () {
+		return { }
+	},
+	methods: {
+		showwindow (el) { this.refs.window.show(el); },
+		hidewindow () { this.refs.window.hide(); },
+		onsubmit (e) {
+			if (e) e.preventDefault();
+
+			this.hidewindow();
+		},
+	}
 };
 </script>

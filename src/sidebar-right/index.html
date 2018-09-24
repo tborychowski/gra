@@ -12,7 +12,7 @@
 					<small>Travel Cost: {$getTravelCost(locationId)}</small>
 				{:else}
 					<small>You're here!</small><br>
-					<small>Cost of stay: {$livingCost}</small>
+					<!-- <small>Cost of stay: {$livingCost}</small> -->
 				{/if}
 			</a>
 		</li>
@@ -50,6 +50,8 @@ export default {
 
 		goto (locationId, ev) {
 			if (ev) ev.preventDefault();
+
+			if (locationId === this.store.get().locationId) return;
 
 			const { cash, getTravelCost } = this.store.get();
 			const cost = getTravelCost(locationId);

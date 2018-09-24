@@ -15,8 +15,8 @@ const data = {
 	models
 };
 
-const COST_OF_LIVING_PER_DAY = 2;
-const TRAVEL_COST_PER_MILE = 0.05;
+const COST_OF_LIVING_PER_DAY = 4;
+const TRAVEL_COST_PER_MILE = 0.07;
 
 const getDistance = (from, to) => models.distances[from] && models.distances[from][to] || models.distances[to][from] || 0;
 const getLivingCost = (locationId) => Math.floor(models.locations[locationId].priceMod * COST_OF_LIVING_PER_DAY);
@@ -122,7 +122,7 @@ store.compute('location', ['locationId'], loc => models.locations[loc]);
 store.compute('ship', ['shipId'], ship => models.ships[ship]);
 store.compute('cargoLoad', ['cargo'], cargo => Object.values(cargo).map(i => i.amount).reduce((p, c) => (p += c), 0));
 store.compute('getDistance', ['locationId'], from => to => getDistance(from, to));
-store.compute('getTravelCost', ['locationId'], from => to => getDistance(from, to) * TRAVEL_COST_PER_MILE);
+store.compute('getTravelCost', ['locationId', 'ship'], (from, ship) => to => Math.floor(getDistance(from, to) * TRAVEL_COST_PER_MILE * ship.travelCostMod));
 store.compute('livingCost', ['locationId'], loc => getLivingCost(loc));
 
 

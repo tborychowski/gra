@@ -1,6 +1,9 @@
 const style = `
-.backdrop { position: fixed; left: 0; right: 0; top: 0; bottom: 0; background: #0006; display: none; align-items: center; justify-content: center; }
-.window { font: inherit; min-width: 300px; min-height: 100px; border-radius: 5px; box-shadow: 0 3px 20px #000a, 0 0 1px #fff9; }
+.backdrop { position: fixed; left: 0; right: 0; top: 0; bottom: 0; background: #0006; display: none;
+	align-items: center; justify-content: space-between; flex-flow: column; }
+.focus-catcher-top { flex: 1; }
+.focus-catcher-bottom {flex: 2; }
+.window { font: inherit; min-width: 300px; min-height: 100px; border-radius: 5px; box-shadow: 0 3px 20px #000a, 0 0 1px #fff9;}
 `;
 
 const template = `<div class="backdrop">
