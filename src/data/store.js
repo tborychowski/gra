@@ -2,6 +2,11 @@ import { Store } from 'svelte/store.js';
 import models from './models';
 import {rand} from '../util';
 
+const PRICE_TWEAK = 1.4;
+const DEPRECIATION = 0.85;
+const TRAVEL_COST_PER_MILE = 0.03;
+
+
 const data = {
 	day: 1,
 	locationId: 'london',
@@ -15,21 +20,18 @@ const data = {
 		wheat: { amount: 25, price: 0 },
 	},
 	prices: {},
-	depreciation: 0.75,
+	depreciation: DEPRECIATION,
 	models
 };
 
-const COST_OF_LIVING_PER_DAY = 4;
-const TRAVEL_COST_PER_MILE = 0.07;
 
 const getDistance = (from, to) => models.distances[from] && models.distances[from][to] || models.distances[to][from] || 0;
-const getLivingCost = (locationId) => Math.floor(models.locations[locationId].priceMod * COST_OF_LIVING_PER_DAY);
 
 
 class GameStore extends Store {
 
 	generateItemPrice (item, loc) {
-		let price = Math.round(rand(item.price.max, item.price.min) * loc.priceMod);
+		let price = Math.round(rand(item.price.max, item.price.min) * loc.priceMod * PRICE_TWEAK);
 
 		if (Math.random() < 0.15) price = Math.ceil(price * 0.75);
 		if (Math.random() < 0.05) price = Math.ceil(price * 1.5);
@@ -65,17 +67,6 @@ class GameStore extends Store {
 
 		// SUBTRACT COST OF TRAVEL
 		if (currentLocationId !== locationId) cash -= this.get().getTravelCost(locationId);
-
-		// SUBTRACT COST OF LIVING
-		else {
-			let cost = getLivingCost(locationId);
-			if (cash > cost) cash -= cost;
-			else {
-				cost -= cash;
-				cash = 0;
-				bank -= cost;
-			}
-		}
 
 		this.set({ locationId, day, cash, bank });
 	}
@@ -156,13 +147,12 @@ store.compute('totalWealth', ['fullInventory', 'depreciation'], (inv, depreciati
 
 
 store.compute('getDistance', ['locationId'], from => to => getDistance(from, to));
-store.compute('getTravelCost', ['locationId', 'inventory'], (from, inventory) => to => {
+store.compute('getTravelCost', ['locationId', 'fullInventory'], (from, inv) => to => {
 	const baseCost = Math.floor(getDistance(from, to) * TRAVEL_COST_PER_MILE);
-	let totalCost = 0;
-	Object.keys(inventory).map(id => {
-		const item =  models.inventory[id];
-		if (item.cargo) totalCost += item.travelCostMod * baseCost;
-	});
+	const totalCost = inv
+		.filter(i => i.cargo)
+		.map(i => i.amount * (baseCost * i.travelCostMod))
+		.reduce((p, c) => c += p, 0);
 	return Math.floor(totalCost);
 });
 

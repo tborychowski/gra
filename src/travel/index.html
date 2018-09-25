@@ -50,7 +50,6 @@ export default {
 
 			const { cash, getTravelCost } = this.store.get();
 			const cost = getTravelCost(locationId);
-			console.log(cost);
 			if (cost > cash) return this.refs.window.show();
 			this.store.goto(locationId);
 		}
