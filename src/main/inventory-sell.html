@@ -10,7 +10,7 @@
 		{#each $fullInventory as invItem}
 			<tr>
 				<td class="name-col">{invItem.name}
-					{#if invItem.cargo} (cargo +{invItem.cargo}){/if}
+					{#if invItem.cargo} (+{invItem.cargo} cargo){/if}
 				</td>
 				<td class="price-col">{invItem.amount}</td>
 				<td class="price-col">{invItem.price * $depreciation}</td>
