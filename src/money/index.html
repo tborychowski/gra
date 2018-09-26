@@ -73,9 +73,8 @@ export default {
 			if (!amount) return;
 
 			if (action === 'withdraw' || action === 'loan') {
-				if (Math.abs(bank - amount) > totalWealth) {
-					return this.set({ error: 'You can only borrow as much as you own!' });
-				}
+				if (bank - amount < -totalWealth) return this.set({ error: 'You can only borrow as much as you own!' });
+
 				this.store.withdraw(amount);
 			}
 			else {	// deposit, repay
