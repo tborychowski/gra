@@ -5,12 +5,13 @@ import {rand} from '../util';
 const PRICE_TWEAK = 1.4;
 const DEPRECIATION = 0.85;
 const TRAVEL_COST_PER_MILE = 0.03;
+const TRAVEL_SPEED_MILES_PER_DAY = 500;
 
 
 const data = {
 	day: 1,
 	locationId: 'london',
-	cash: 100,
+	cash: 1000,
 	bank: 0,
 	damage: 0,
 	inventory: {
@@ -52,9 +53,6 @@ class GameStore extends Store {
 
 
 	goto (locationId) {
-		// INCREASE DAY
-		const day = this.get().day + 1;
-
 		// GENERATE PRICES FOR A LOCATION
 		this.generatePrices(locationId);
 
@@ -68,7 +66,7 @@ class GameStore extends Store {
 		// SUBTRACT COST OF TRAVEL
 		if (currentLocationId !== locationId) cash -= this.get().getTravelCost(locationId);
 
-		this.set({ locationId, day, cash, bank });
+		this.set({ locationId, cash, bank });
 	}
 
 	buy (itemId, amount) {
@@ -147,6 +145,8 @@ store.compute('totalWealth', ['fullInventory', 'depreciation'], (inv, depreciati
 
 
 store.compute('getDistance', ['locationId'], from => to => getDistance(from, to));
+store.compute('getTravelDays', ['locationId'], from => to => Math.ceil(getDistance(from, to) / TRAVEL_SPEED_MILES_PER_DAY));
+
 store.compute('getTravelCost', ['locationId', 'fullInventory'], (from, inv) => to => {
 	const baseCost = Math.floor(getDistance(from, to) * TRAVEL_COST_PER_MILE);
 	const totalCost = inv

@@ -1,5 +1,7 @@
 const events = {
-	storm: { name: 'Storm', damage: 100, description: 'Wind blows as fuck!', }
+	pirates_small: { name: 'Pirates', chance: 0.10, effect: { min: .1, max: 0.5, type: 'reduce-cargo' }, description: 'A pirate ship attacks and steals some of your cargo.', },
+	pirates_large: { name: 'Pirates', chance: 0.05, effect: { min: .4, max: 0.9, type: 'reduce-cargo' }, description: 'Pirate ships raided your fleet. They steal some of your cargo.', },
+	storm:         { name: 'Storm',   chance: 0.20, effect: { min: .2, max: 0.8, type: 'reduce-cargo' }, description: 'Wind blows as fuck! It destroys some of your cargo.', }
 };
 
 const locations = {

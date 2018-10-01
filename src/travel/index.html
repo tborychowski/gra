@@ -8,7 +8,8 @@
 			<b>{location.name}</b><br>
 			{#if $getDistance(locationId) > 0}
 				<small>Distance: {$getDistance(locationId)} miles</small><br>
-				<small>Travel Cost: {$getTravelCost(locationId)}</small>
+				<small>Cost: {$getTravelCost(locationId)}</small><br>
+				<small>Time: {$getTravelDays(locationId)} days</small>
 			{:else}
 				<small>You're here!</small><br>
 			{/if}
@@ -48,9 +49,22 @@ export default {
 
 			if (locationId === this.store.get().locationId) return;
 
-			const { cash, getTravelCost } = this.store.get();
+			const { cash, getTravelCost, getDistance, getTravelDays } = this.store.get();
 			const cost = getTravelCost(locationId);
 			if (cost > cash) return this.refs.window.show();
+
+			const distance = getDistance(locationId);
+			const days = getTravelDays(locationId);
+
+			this.store.set({ day: this.store.get().day + days }); // INCREASE DAYS
+
+
+			// SHOW TRAVEL DIALOG/PROGRESSBAR
+			// Generate random events
+			console.log(distance, days);
+
+
+
 			this.store.goto(locationId);
 		}
 	}
