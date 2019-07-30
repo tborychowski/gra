@@ -42,25 +42,28 @@ const distances = {
 
 
 const wares = {
-	wheat   : { name: 'Wheat',   showChance: 0.99, price: { min: 10,   max: 15   }},
-	corn    : { name: 'Corn',    showChance: 0.70, price: { min: 12,   max: 17   }},
-	tea     : { name: 'Tea',     showChance: 0.98, price: { min: 20,   max: 30   }},
-	sugar   : { name: 'Sugar',   showChance: 0.90, price: { min: 50,   max: 70   }},
-	tobacco : { name: 'Tobacco', showChance: 0.85, price: { min: 110,  max: 140  }},
-	coffee  : { name: 'Coffee',  showChance: 0.60, price: { min: 150,  max: 180  }},
-	spices  : { name: 'Spices',  showChance: 0.90, price: { min: 350,  max: 400  }},
-	silk    : { name: 'Silk',    showChance: 0.70, price: { min: 500,  max: 550  }},
-	tools   : { name: 'Tools',   showChance: 0.95, price: { min: 1000, max: 1080 }},
+	wheat   : { name: 'Wheat',   showChance: 0.99, price: { min: 10,    max: 15   }},
+	corn    : { name: 'Corn',    showChance: 0.70, price: { min: 12,    max: 17   }},
+	tea     : { name: 'Tea',     showChance: 0.98, price: { min: 20,    max: 30   }},
+	sugar   : { name: 'Sugar',   showChance: 0.90, price: { min: 50,    max: 70   }},
+	tobacco : { name: 'Tobacco', showChance: 0.85, price: { min: 110,   max: 140  }},
+	coffee  : { name: 'Coffee',  showChance: 0.60, price: { min: 150,   max: 180  }},
+	spices  : { name: 'Spices',  showChance: 0.90, price: { min: 350,   max: 400  }},
+	silk    : { name: 'Silk',    showChance: 0.70, price: { min: 500,   max: 550  }},
+	tools   : { name: 'Tools',   showChance: 0.95, price: { min: 1000,  max: 1080 }},
+	slaves  : { name: 'Slaves',  showChance: 0.90, price: { min: 20000, max: 22000 }},
 };
 
 const inventory = {
-	sloop:       { name: 'Sloop',            travelCostMod: 1,  cargo: 25,   price: 1000,  description: 'Small vessel, but it floats.' },
-	schooner:    { name: 'Schooner',         travelCostMod: 2,  cargo: 100,  price: 4000,  description: 'A biggger ship. Can take more cargo.' },
-	brig:        { name: 'Brig',             travelCostMod: 6,  cargo: 300,  price: 12000, description: 'Formidable vessel. Decent storage.' },
-	frigatelite: { name: 'Light  Frigate',   travelCostMod: 16, cargo: 800,  price: 32000, description: 'Big ship. Can take loads of cargo.' },
-	frigate:     { name: 'Frigate',          travelCostMod: 24, cargo: 1200, price: 48000, description: 'Huge ship. Can take loads of cargo.' },
-	galleon:     { name: 'Galleon',          travelCostMod: 32, cargo: 1600, price: 64000, description: 'Huge ship. Can take loads of cargo.' },
-	line:        { name: 'Ship-of-the-Line', travelCostMod: 40, cargo: 2000, price: 80000, description: 'Enormous ship. Can take everything!' },
+	sloop:       { name: 'Sloop',            travelCostMod: 1,    cargo: 25,     price: 1000,     description: 'Small vessel, but it floats.' },
+	schooner:    { name: 'Schooner',         travelCostMod: 2,    cargo: 100,    price: 4000,     description: 'A biggger ship. Can take more cargo.' },
+	brig:        { name: 'Brig',             travelCostMod: 6,    cargo: 300,    price: 12000,    description: 'Formidable vessel. Decent storage.' },
+	frigatelite: { name: 'Light  Frigate',   travelCostMod: 16,   cargo: 800,    price: 32000,    description: 'Big ship. Can take loads of cargo.' },
+	frigate:     { name: 'Frigate',          travelCostMod: 24,   cargo: 1200,   price: 48000,    description: 'Huge ship. Can take loads of cargo.' },
+	galleon:     { name: 'Galleon',          travelCostMod: 32,   cargo: 1600,   price: 64000,    description: 'Huge ship. Can take loads of cargo.' },
+	line:        { name: 'Ship-of-the-Line', travelCostMod: 40,   cargo: 2000,   price: 80000,    description: 'Enormous ship. Can take everything!' },
+	fleet:       { name: 'Fleet',            travelCostMod: 100,  cargo: 50000,  price: 1000000,  description: 'A fleet of the biggest ships.' },
+	fleet10:     { name: '10 Fleets',        travelCostMod: 1000, cargo: 500000, price: 10000000, description: '10 Times the size of a fleet.' },
 };
 
 

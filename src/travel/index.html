@@ -8,7 +8,7 @@
 			<b>{location.name}</b><br>
 			{#if $getDistance(locationId) > 0}
 				<small>Distance: {$getDistance(locationId)} miles</small><br>
-				<small>Cost: {$getTravelCost(locationId)}</small><br>
+				<small>Cost: {formatNumber($getTravelCost(locationId))}</small><br>
 				<small>Time: {$getTravelDays(locationId)} days</small>
 			{:else}
 				<small>You're here!</small><br>
@@ -31,9 +31,11 @@
 
 <script>
 import Data from '../data';
+import {formatNumber} from '../util';
 
 export default {
 	store: () => Data.Store,
+	helpers: { formatNumber },
 
 	oncreate () {
 		this.store.generatePrices();

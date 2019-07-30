@@ -12,8 +12,8 @@
 				<td class="name-col">{invItem.name}
 					{#if invItem.cargo} (+{invItem.cargo} cargo){/if}
 				</td>
-				<td class="price-col">{invItem.amount}</td>
-				<td class="price-col">{invItem.price * $depreciation}</td>
+				<td class="price-col">{formatNumber(invItem.amount)}</td>
+				<td class="price-col">{formatNumber(invItem.price * $depreciation)}</td>
 				<td class="btn-col"><button class="btn" on:click="sellInventory(invItem.id, invItem, this)">Sell</button></td>
 			</tr>
 		{/each}
@@ -22,7 +22,7 @@
 
 <x-window ref:confirmWindow>
 	<h1 class="title">Sell Inventory</h1>
-	<div class="content"><h2>Are you sure you wish to sell the {item.name} for {price}?</h2></div>
+	<div class="content"><h2>Are you sure you wish to sell the {item.name} for {formatNumber(price)}?</h2></div>
 	<div class="buttons">
 		<button class="btn" on:click="hideconfirm()">Cancel</button>
 		<button class="btn success" on:click="submitconfirm()">Sell</button>
@@ -38,9 +38,11 @@
 
 <script>
 import Data from '../data';
+import {formatNumber} from '../util';
 
 export default {
 	store: () => Data.Store,
+	helpers: { formatNumber },
 	data () {
 		return {
 			amount: 0,

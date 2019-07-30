@@ -11,9 +11,9 @@
 		{#each Object.entries($cargo) as [itemId, item]}
 		<tr>
 			<td class="name-col">{$models.wares[itemId].name}</td>
-			<td class="price-col">{item.amount}</td>
-			<td class="price-col">{item.price}</td>
-			<td class="price-col">{$prices[itemId] && $prices[itemId].price}</td>
+			<td class="price-col">{formatNumber(item.amount)}</td>
+			<td class="price-col">{formatNumber(item.price)}</td>
+			<td class="price-col">{formatNumber($prices[itemId] && $prices[itemId].price)}</td>
 			<td class="btn-col"><button class="btn" on:click="sell(itemId, item, this)">Sell</button></td>
 		</tr>
 		{/each}
@@ -38,9 +38,11 @@
 
 <script>
 import Data from '../data';
+import {formatNumber} from '../util';
 
 export default {
 	store: () => Data.Store,
+	helpers: { formatNumber },
 	data () {
 		return {
 			amount: 0,
@@ -64,7 +66,7 @@ export default {
 			const {item, itemId} = this.get();
 			if (!item) return;
 			const itemPrice = this.store.get().prices[itemId].price;
-			this.set({info: `${amount} x ${itemPrice} = ${amount * itemPrice}` });
+			this.set({info: `${formatNumber(amount)} x ${formatNumber(itemPrice)} = ${formatNumber(amount * itemPrice)}` });
 		},
 
 		sell (itemId, item, el) {

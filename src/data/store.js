@@ -11,7 +11,7 @@ const TRAVEL_SPEED_MILES_PER_DAY = 500;
 const data = {
 	day: 1,
 	locationId: 'london',
-	cash: 1000,
+	cash: 10000,
 	bank: 0,
 	damage: 0,
 	inventory: {
@@ -26,7 +26,11 @@ const data = {
 };
 
 
-const getDistance = (from, to) => models.distances[from] && models.distances[from][to] || models.distances[to][from] || 0;
+const getDistance = (from, to) => {
+	if (models.distances[from] && models.distances[from][to]) return models.distances[from][to];
+	if (models.distances[to]) return models.distances[to][from];
+	return 0;
+};
 
 
 class GameStore extends Store {

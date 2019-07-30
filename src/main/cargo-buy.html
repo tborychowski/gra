@@ -10,7 +10,7 @@
 			{#if item.show}
 			<tr>
 				<td class="name-col">{item.name}</td>
-				<td class="price-col">{item.price}</td>
+				<td class="price-col">{formatNumber(item.price)}</td>
 				<td class="btn-col"><button class="btn" on:click="buy(itemId, item, this)">Buy</button></td>
 			</tr>
 			{/if}
@@ -41,9 +41,11 @@
 
 <script>
 import Data from '../data';
+import {formatNumber} from '../util';
 
 export default {
 	store: () => Data.Store,
+	helpers: { formatNumber },
 	data () {
 		return {
 			amount: 0,
@@ -75,7 +77,7 @@ export default {
 			if (amount > max) return this.set({ error: 'You don\'t have enough cash!' });
 
 			const itemPrice = item.price;
-			this.set({info: `${amount} x ${itemPrice} = ${amount * itemPrice}` });
+			this.set({info: `${formatNumber(amount)} x ${formatNumber(itemPrice)} = ${formatNumber(amount * itemPrice)}` });
 		},
 
 		buy (itemId, item, el) {
